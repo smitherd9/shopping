@@ -27,9 +27,20 @@ var Storage = {
 },
 
   
-  edit: function(id){
-    var item = {id : id};
+  edit: function(id, name){
+    var item = {id : id,
+                name: name
+    };
+    for(var i = 0; i < this.items.length; i++){
+      if(id == this.items[i].id){
+        this.items[i] = item;
+        break;
+      }
+      
+    }
+    return item;
   }
+  
 };
 
 var createStorage = function() {
@@ -62,26 +73,26 @@ app.post('/items', jsonParser, function(request, response) {
 });
 
 app.delete('/items/:id', jsonParser, function(request, response){
-  
     var item = storage.delete(request.params.id);
-    return response.sendStatus(200);
+    response.status(200).json(item);
   
+  
+    // return response.status(500).json(item);
   
   
 });
 
-// app.delete('/items/:id', jsonParser, function(request, response) {
-//   var id = request.params.id;
-//   var deleted = storage.remove(id) 
-//   return response.status(200).json(deleted);
-// });
+
 
 app.put('/items/:id', jsonParser, function(request, response){
+    var item = storage.edit(request.params.id, request.body.name);
+    response.status(200).json(item);
+    
   
-  
-})
+});
 
 
 
-
+exports.app = app;
+exports.storage = storage;
 app.listen(process.env.PORT || 8080, process.env.IP);
