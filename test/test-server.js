@@ -33,6 +33,17 @@ chai.use(chaiHttp);
 
 
 describe('Shopping List', function() {
+    
+    beforeEach(function() {
+        server.storage.items = [];
+        server.storage.setId = 1;
+        storage.add('Broad beans');
+        storage.add('Tomatoes');
+        storage.add('Peppers');
+});
+    
+    
+    
     it('should list items on GET', function(done) {
         chai.request(app)
             .get('/items')
@@ -86,18 +97,19 @@ describe('Shopping List', function() {
             
  it('should delete an item on delete', function(done){
      chai.request(app)
-     .delete('/items/:id')
+     .delete('/items/1')
      .send({id: 1})
      .end(function(err, res){
+         console.log(res.body);
          should.equal(err, null);
          res.should.have.status(200);
          res.should.be.json;
-         res.body.should.be.a('object');
-         res.body.should.have.property('name');
-         res.body.should.have.property('id');
-         res.body.id.should.be.a('number');
-         res.body.name.should.be.a('string');
-         res.body.id.should.equal(1);
+         res.body.should.be.a('array');
+         res.body[0].should.have.property('name');
+         res.body[0].should.have.property('id');
+         res.body[0].id.should.be.a('number');
+         res.body[0].name.should.be.a('string');
+         res.body[0].id.should.equal(1);
          storage.items.should.be.a('array');
          storage.items.should.have.length(2);
          done();
@@ -109,8 +121,10 @@ describe('Shopping List', function() {
     
     it('should edit an item on put', function(done) {
     chai.request(app)
-     .put('/items/:id')
-     .send({id : 1})
+     .put('/items/1')
+     .send({id : 1,
+         name: 'cake'
+     })
      .end(function(err, res){
          should.equal(err, null);
          res.should.have.status(200);
@@ -120,6 +134,7 @@ describe('Shopping List', function() {
          res.body.should.have.property('id');
          res.body.id.should.be.a('number');
          res.body.name.should.be.a('string');
+         res.body.name.should.equal('cake');
          res.body.id.should.equal(1);
          storage.items.should.be.a('array');
          storage.items.should.have.length(3);

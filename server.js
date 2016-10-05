@@ -85,7 +85,7 @@ app.delete('/items/:id', jsonParser, function(request, response){
 
 
 app.put('/items/:id', jsonParser, function(request, response){
-    var item = storage.edit(request.params.id, request.body.name);
+    var item = storage.edit(+request.params.id, request.body.name);
     response.status(200).json(item);
     
   
